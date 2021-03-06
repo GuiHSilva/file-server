@@ -44,36 +44,64 @@ class ArquivoController extends Controller
      */
     public function store(Request $request)
     {
-        // Pega o arquivo que está no request
-        $arquivo = $request->file('file');
 
-        // Valida se existe arquivo para upload
-        if ( ! isset($arquivo) ) {
-            return redirect('/');
+        // Tratamento de erros
+        try {
+            
+            // Pega o arquivo que está no request
+            $arquivo = $request->file('file');
+
+            // Valida se existe arquivo para upload
+            if ( ! isset($arquivo) ) {
+                
+                return redirect()
+                        ->route('index')
+                        ->with('error', 'Nenhum arquivo foi anexado!');
+
+            }
+
+            // Salva o arquivo, nome é um timestamp pra nao ter conflito, o regex é pra garantir que nao vao entrar uns caracteres doidos
+            // O salvamento dos arquivos será separado por pastas, cada pasté é o mimetype de cada arquivo enviado
+            $nomeArquivo = preg_replace("/[^a-zA-Z0-9_]/", '', explode('.', $arquivo->getClientOriginalName())[0]);
+            $pastaDestino = $arquivo->getMimeType();
+
+            // Finalmente, salva
+            $path = $arquivo->storeAs('files', $pastaDestino . '/' . $nomeArquivo . '-' . time() . '.' . $arquivo->getClientOriginalExtension());
+        
+            // Registra no banco a inserçao do arquivo
+            // Instancia o modelo Arquivo
+            $arq = new Arquivo;
+
+            // Definicao dos valores do modelo Arquivo
+            $arq->filePath  = $path;
+            $arq->fileName  = $arquivo->getClientOriginalName();
+            $arq->extension = $arquivo->getClientOriginalExtension();
+            $arq->url       = $this->generateNewUrl();
+
+            // Salva no banco o modelo Arquivo
+            $operacao = $arq->save();
+
+            // Callback para responder a solicitacao de upload
+            if ( $operacao ) {
+
+                return redirect()
+                        ->route('index')
+                        ->with('success', 'O arquivo ' . $arq->fileName . ' foi armazenado com sucesso!');
+
+            }
+
+            return redirect()
+                ->route('index')
+                ->with('error', 'Houve um erro ao armazenar o arquivo');
+
+        } catch (\Throwable $th) {
+
+            return redirect()
+                ->route('index')
+                ->with('error', 'Houve uma falha ao armazenar o arquivo: ' . $th->getMessage());
+            
         }
 
-        // Salva o arquivo, nome é um timestamp pra nao ter conflito, o regex é pra garantir que nao vao entrar uns caracteres doidos
-        // O salvamento dos arquivos será separado por pastas, cada pasté é o mimetype de cada arquivo enviado
-        $nomeArquivo = preg_replace("/[^a-zA-Z0-9_]/", '', explode('.', $arquivo->getClientOriginalName())[0]);
-        $pastaDestino = $arquivo->getMimeType();
-
-        // Finalmente, salva
-        $path = $arquivo->storeAs('files', $pastaDestino . '/' . $nomeArquivo . '-' . time() . '.' . $arquivo->getClientOriginalExtension());
-    
-        // Registra no banco a inserçao do arquivo
-        // Instancia o modelo Arquivo
-        $arq = new Arquivo;
-
-        // Definicao dos valores do modelo Arquivo
-        $arq->filePath  = $path;
-        $arq->fileName  = $arquivo->getClientOriginalName();
-        $arq->extension = $arquivo->getClientOriginalExtension();
-        $arq->url       = $this->generateNewUrl();
-
-        // Salva no banco o modelo Arquivo
-        $arq->save();
-
-        dd($path);
     }
 
     /**
