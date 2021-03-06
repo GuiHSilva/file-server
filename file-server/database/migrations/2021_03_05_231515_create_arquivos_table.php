@@ -15,7 +15,8 @@ class CreateArquivosTable extends Migration
     {
         Schema::create('arquivos', function (Blueprint $table) {
             $table->id();
-            $table->string('file')->unique();
+            $table->string('filePath')->unique();
+            $table->string('fileName');
             $table->string('extension');
             $table->string('url')->unique();
             $table->timestamps();

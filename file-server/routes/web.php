@@ -22,11 +22,8 @@ Route::get('create', [HomeController::class, 'create']);
 
 
 Route::post('arquivo/novo', [ArquivoController::class, 'store']);
+Route::get('arquivo/{url}', [ArquivoController::class, 'show']);
 
-
-Route::get('arquivo/{url}', function($url) {
-    return Arquivo::where('url', $url)->first();
-} );
 
 
 Route::resource('arquivo', ArquivoController::class);

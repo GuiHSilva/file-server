@@ -3,9 +3,23 @@
 @section('content')
         
     <p>
-        Visualizando o arquivo
+        Visualizando o arquivo. <a href="{{ url('/') }}">Lista de arquivos</a>
     </p>
 
-    
+    <div class="card md-5">
+        <div class="card-header">
+            Arquivo #{{ $arquivo->id }}
+        </div>
+        <div class="card-body">
+            <p><b>Arquivo:</b> {{ $arquivo->fileName }}</p>
+            <p><b>Diretório:</b> {{ $arquivo->filePath }}</p>
+            <p><b>Data de upload:</b> {{ $arquivo->getData($arquivo->created_at) }}</p>
+            <p><b>Extensão:</b> {{ $arquivo->extension }}</p>
+            <p><b>URL:</b> {{ $arquivo->url }}</p>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-primary" href="{{ url('arquivo/' . $arquivo->url . '/download') }}" role="button">Acessar arquivo</a>
+        </div>
+    </div>
 
 @endsection
