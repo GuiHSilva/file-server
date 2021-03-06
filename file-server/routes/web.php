@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ArquivoController;
+use App\Http\Controllers\HomeController;
+use App\Models\Arquivo;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('', [HomeController::class, 'index']);
+Route::get('create', [HomeController::class, 'create']);
+
+
+Route::post('arquivo/novo', [ArquivoController::class, 'store']);
+
+
+Route::get('arquivo/{url}', function($url) {
+    return Arquivo::where('url', $url)->first();
+} );
+
+
+Route::resource('arquivo', ArquivoController::class);
