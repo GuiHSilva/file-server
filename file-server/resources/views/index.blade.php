@@ -6,7 +6,7 @@
     Lista de arquivos registrados
   </p>
 
-  <table class="table table-hover table-inverse table-responsive">
+  <table class="table table-hover table-inverse table-responsive" style="display: inline-table;">
 
     <thead class="thead-inverse">
       <tr>
