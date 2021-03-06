@@ -37,9 +37,7 @@
 
   <div class="row">
 
-    <div class="col-4">
-
-      @include('util/alerts')
+    <div class="col-5">
 
       <form action="{{ url('arquivo/novo') }}" method="post" role="form" enctype="multipart/form-data">
     
@@ -47,12 +45,16 @@
         <div class="row">
             <input type="file" class="form-control" id="file" name="file" aria-describedby="helpId">
             <input type="submit" class="form-control btn-primary btn-sm">
+            
+            @include('util/alerts')
         </div>           
       
       </form> 
     </div>
+    <div class="col-3">
 
-    <div class="col-4">
+    </div>
+    <div class="col-4 float-right">
       NAVEGACAO ENTRE PAGINAS DA TABELA
     </div>
 

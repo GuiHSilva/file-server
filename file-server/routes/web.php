@@ -18,12 +18,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('', [HomeController::class, 'index'])->name('index');
-Route::get('create', [HomeController::class, 'create']);
-
 
 Route::post('arquivo/novo', [ArquivoController::class, 'store']);
 Route::get('arquivo/{url}', [ArquivoController::class, 'show']);
-
-
-
-Route::resource('arquivo', ArquivoController::class);
+Route::get('arquivo/{url}/download', [ArquivoController::class, 'download']);
+Route::get('arquivo/{arquivo}/delete', [ArquivoController::class, 'destroy']);

@@ -16,9 +16,15 @@
             <p><b>Data de upload:</b> {{ $arquivo->getData($arquivo->created_at) }}</p>
             <p><b>Extensão:</b> {{ $arquivo->extension }}</p>
             <p><b>URL:</b> {{ $arquivo->url }}</p>
+            @if ( $arquivo->isImage($arquivo->extension) )
+                <p><b>Pré-visualização da imagem:</b></p>
+                <img src="{{ Storage::url($arquivo->filePath) }}" alt="{{ $arquivo->fileName }}" style="max-width: 250px;">
+            @endif
         </div>
         <div class="card-footer">
-            <a class="btn btn-primary" href="{{ url('arquivo/' . $arquivo->url . '/download') }}" role="button">Acessar arquivo</a>
+            <a class="btn btn-primary" href="{{ url('arquivo/' . $arquivo->url . '/download') }}" role="button">Baixar arquivo</a>
+            
+            <a class="btn btn-danger" href="{{ url('arquivo/' . $arquivo->id . '/delete') }}" role="button">Apagar arquivo</a>
         </div>
     </div>
 

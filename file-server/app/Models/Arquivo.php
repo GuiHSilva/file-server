@@ -16,9 +16,24 @@ class Arquivo extends Model
         'file', 'extension', 'url'  
     ];
 
+    /**
+     * Valida se a extensao é uma imagem para a pre-visualizacao no show
+     */
+    public function isImage($value)
+    {   
+        $formatos = [
+            'jpg', 'jpeg', 'png', 'gif', 'svg'
+        ];
+        return in_array($value, $formatos);
+    }
+
+    /**
+     * Formata a data
+     */
     public function getData($value) 
     {
         return Carbon::parse($value)->format('d/m/Y H:i');
     }
+
 
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Arquivo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ArquivoController extends Controller
@@ -33,7 +34,7 @@ class ArquivoController extends Controller
      */
     public function create()
     {
-        return view('add');
+        //
     }
 
     /**
@@ -60,14 +61,19 @@ class ArquivoController extends Controller
 
             }
 
-            // Salva o arquivo, nome é um timestamp pra nao ter conflito, o regex é pra garantir que nao vao entrar uns caracteres doidos
-            // O salvamento dos arquivos será separado por pastas, cada pasté é o mimetype de cada arquivo enviado
-            $nomeArquivo = preg_replace("/[^a-zA-Z0-9_]/", '', explode('.', $arquivo->getClientOriginalName())[0]);
+            // Salva o arquivo, no nome é concatenado um timestamp pra nao ter arquivos repetidos, o regex é pra
+            // garantir que nao vao entrar uns caracteres doidos.
+            // O salvamento dos arquivos será separado por pastas, cada pasta é o mimetype dos arquivo enviado
+            $nomeArquivo = preg_replace("/[^a-zA-Z0-9_]/", '', explode('.', $arquivo->getClientOriginalName())[0]) . '-' . time() . '.' . $arquivo->getClientOriginalExtension();
             $pastaDestino = $arquivo->getMimeType();
 
-            // Finalmente, salva
-            $path = $arquivo->storeAs('files', $pastaDestino . '/' . $nomeArquivo . '-' . time() . '.' . $arquivo->getClientOriginalExtension());
-        
+            // Finalmente, salva no storage
+            // Está sendo usado o putFile para salvar o arquivo com a extensao, para quando baixar
+            // o arquivo pelo storage::download já ser feito o download do arquivo corretamente
+            $path = Storage::putFileAs(
+                'public/' . $pastaDestino, $arquivo, $nomeArquivo
+            );
+
             // Registra no banco a inserçao do arquivo
             // Instancia o modelo Arquivo
             $arq = new Arquivo;
@@ -95,7 +101,7 @@ class ArquivoController extends Controller
                 ->with('error', 'Houve um erro ao armazenar o arquivo');
 
         } catch (\Throwable $th) {
-
+            
             return redirect()
                 ->route('index')
                 ->with('error', 'Houve uma falha ao armazenar o arquivo: ' . $th->getMessage());
@@ -152,7 +158,34 @@ class ArquivoController extends Controller
      */
     public function destroy(Arquivo $arquivo)
     {
-        //
+
+        // deleta um arquivo e remove o registro do banco
+        Storage::delete($arquivo->filePath);
+        $arquivo->delete();
+
+        return redirect()
+            ->route('index')
+            ->with('success', 'O arquivo ' . $arquivo->fileName . ' foi deletado!');
+
+    }
+
+    /**
+     * Download the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function download(Request $request)
+    {
+        $arquivo = Arquivo::where('url', $request->url)->first();
+
+        if ( ! isset($arquivo) ) {
+            abort(404);
+        }
+
+        $storage = Storage::download($arquivo->filePath);
+
+        return $storage;
     }
 
     /**
