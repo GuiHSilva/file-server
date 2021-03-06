@@ -59,18 +59,11 @@ class ArquivoController extends Controller
 
             }
 
-            // Salva o arquivo, no nome é concatenado um timestamp pra nao ter arquivos repetidos, o regex é pra
-            // garantir que nao vao entrar uns caracteres doidos.
-            // O salvamento dos arquivos será separado por pastas, cada pasta é o mimetype dos arquivo enviado
-            $nomeArquivo = preg_replace("/[^a-zA-Z0-9_]/", '', explode('.', $arquivo->getClientOriginalName())[0]) . '-' . time() . '.' . $arquivo->getClientOriginalExtension();
-            $pastaDestino = $arquivo->getMimeType();
+            $pastaDestino = 'uploads/' . $arquivo->getMimeType();
 
             // Finalmente, salva no storage
-            // Está sendo usado o putFile para salvar o arquivo com a extensao, para quando baixar
-            // o arquivo pelo storage::download já ser feito o download do arquivo corretamente
-            $path = Storage::putFileAs(
-                'public/' . $pastaDestino, $arquivo, $nomeArquivo
-            );
+            // Está sendo usado o put para salvar o arquivo
+            $path = Storage::put($pastaDestino, $arquivo);
 
             // Registra no banco a inserçao do arquivo
             // Instancia o modelo Arquivo
