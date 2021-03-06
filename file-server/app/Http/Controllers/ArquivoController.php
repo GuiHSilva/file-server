@@ -12,8 +12,6 @@ class ArquivoController extends Controller
 
     public function __construct()
     {
-        $this->middleware('web');
-        $this->middleware('web')->except('upload');
     }
 
     /**
@@ -101,7 +99,7 @@ class ArquivoController extends Controller
                 ->with('error', 'Houve um erro ao armazenar o arquivo');
 
         } catch (\Throwable $th) {
-            
+
             return redirect()
                 ->route('index')
                 ->with('error', 'Houve uma falha ao armazenar o arquivo: ' . $th->getMessage());

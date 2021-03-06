@@ -54,8 +54,8 @@
     <div class="col-3">
 
     </div>
-    <div class="col-4 float-right">
-      NAVEGACAO ENTRE PAGINAS DA TABELA
+    <div class="col-4 float-right"> 
+      {!! $arquivos->links() !!}
     </div>
 
   </div>

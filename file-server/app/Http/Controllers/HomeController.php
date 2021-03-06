@@ -15,7 +15,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $arquivos = Arquivo::all();
+        $arquivos = Arquivo::paginate(4);
 
         return view('index', compact('arquivos'));
     }
