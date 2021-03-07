@@ -21,5 +21,6 @@ Route::get('', [HomeController::class, 'index'])->name('index');
 
 Route::post('arquivo/novo', [ArquivoController::class, 'store']);
 Route::get('arquivo/{url}', [ArquivoController::class, 'show']);
+Route::get('arquivo/{url}/view', [ArquivoController::class, 'view']);
 Route::get('arquivo/{url}/download', [ArquivoController::class, 'download']);
 Route::get('arquivo/{arquivo}/delete', [ArquivoController::class, 'destroy']);

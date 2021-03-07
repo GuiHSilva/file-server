@@ -46,13 +46,13 @@ class ArquivoController extends Controller
 
         // Tratamento de erros
         try {
-            
+
             // Pega o arquivo que está no request
             $arquivo = $request->file('file');
 
             // Valida se existe arquivo para upload
             if ( ! isset($arquivo) ) {
-                
+
                 return redirect()
                         ->route('index')
                         ->with('error', 'Nenhum arquivo foi anexado!');
@@ -96,7 +96,7 @@ class ArquivoController extends Controller
             return redirect()
                 ->route('index')
                 ->with('error', 'Houve uma falha ao armazenar o arquivo: ' . $th->getMessage());
-            
+
         }
 
     }
@@ -177,6 +177,29 @@ class ArquivoController extends Controller
         $storage = Storage::download($arquivo->filePath);
 
         return $storage;
+    }
+
+    /**
+     * View the specified resource by file_get_contents.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function view(Request $request)
+    {
+        $arquivo = Arquivo::where('url', $request->url)->first();
+
+        if ( ! isset($arquivo) ) {
+            abort(404);
+        }
+
+        $diretorio  = Storage::path($arquivo->filePath);
+        $mimeType   = Storage::mimeType($arquivo->filePath);
+
+        $content = file_get_contents($diretorio);
+
+        return response($content)
+                ->header('content-type', $mimeType);
     }
 
     /**
