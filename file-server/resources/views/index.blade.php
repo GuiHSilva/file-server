@@ -1,7 +1,7 @@
 @extends('base')
 
 @section('content')
-        
+
   <p>
     Lista de arquivos registrados
   </p>
@@ -40,21 +40,21 @@
     <div class="col-5">
 
       <form action="{{ url('arquivo/novo') }}" method="post" role="form" enctype="multipart/form-data">
-    
+
         @csrf
         <div class="row">
             <input type="file" class="form-control" id="file" name="file" aria-describedby="helpId">
             <input type="submit" class="form-control btn-primary btn-sm">
-            
+
             @include('util/alerts')
-        </div>           
-      
-      </form> 
+        </div>
+
+      </form>
     </div>
     <div class="col-3">
 
     </div>
-    <div class="col-4 float-right"> 
+    <div class="col-4 float-right">
       {!! $arquivos->links() !!}
     </div>
 
